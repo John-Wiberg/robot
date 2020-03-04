@@ -11,6 +11,8 @@
 #define TAIL_SERVO_MAX 2385
 #define MINI_SERVO_MIN 586
 #define MINI_SERVO_MAX 2500
+#define LEVER_SERVO_MIN 806
+#define LEVER_SERVO_MAX 2269
 #define counts_per_inch 2.777977189
 #define PI 3.141592653
 
@@ -22,6 +24,7 @@ FEHMotor Right_motor(FEHMotor::Motor3,7.2);
 FEHMotor Left_motor(FEHMotor::Motor2,7.2);
 FEHServo Tail(FEHServo::Servo7);
 FEHServo Mini(FEHServo::Servo0);
+FEHServo Lever(FEHServo::Servo3);
 
 //functions to test the robot
 void RightDigTest();
@@ -63,15 +66,12 @@ void ReleaseTray();
 int main(void)
 {
     RPS.InitializeTouchMenu();
-    Tail.SetDegree(0);
-    Mini.SetDegree(15);
+    Lever.SetDegree(180);
     LCD.WriteLine(CdS_Cell.Value());
     while(CdS_Cell.Value()>2)
     {}
     Sleep(1.0);
     Start(CdS_Cell.Value());
-    Tray();
-    Ticket();
     Burger();
     return 0;
 }
@@ -106,9 +106,10 @@ void Start(float b)
     {
         Forward(13);
         Turn_Right(0,45);
+        check_heading(90);
         Left_motor.SetPercent(75.);
         Right_motor.SetPercent(-75.);
-        encoder(counts_per_inch*24.3);
+        encoder(counts_per_inch*26);
         Left_motor.Stop();
         Right_motor.Stop();
         Sleep(1.0);
@@ -128,9 +129,21 @@ void Tray()
 
 void Burger()
 {
-    Turn_Right(0,180);
-    Forward(7);
-    Backwards(9);
+    Turn_Right(0,45);
+    Forward(2);
+    Turn_Left(0,45);
+    Lever.SetDegree(40);
+    Forward(3.75);
+    //check_y_plus(50.9);
+    Sleep(1.5);
+    Lever.SetDegree(108);
+    Sleep(1.0);
+    Turn_Right(0,20);
+    Sleep(1.0);
+    Backwards(1.5);
+    Turn_Right(0,20);
+    Forward(1.5);
+    Turn_Left(1,30);
 }
 
 void Ticket()
@@ -142,7 +155,7 @@ void Ticket()
     Backwards(5);
     Tail.SetDegree(100);
     Forward(4.5);
-    check_y_minus(45.9);
+    check_y_plus(45.9);
     Turn_Right(0,30);
     Sleep(1.0);
     Turn_Left(1,28);
@@ -393,17 +406,19 @@ void check_y_minus(float y_coordinate) //using RPS while robot is in the -y dire
 void check_y_plus(float y_coordinate) //using RPS while robot is in the +y direction
 {
     //check if receiving proper RPS coordinates and whether the robot is within an acceptable range
-    while((RPS.Y()>0) && (RPS.Y() < y_coordinate - 1 || RPS.Y() > y_coordinate + 1))
+    while((RPS.Y()>0) && (RPS.Y() < y_coordinate - .25 || RPS.Y() > y_coordinate + .25))
     {
         if(RPS.Y() > y_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
             Backwards(.25);
+            Sleep(300);
         }
         else if(RPS.Y() < y_coordinate)
         {
             //pulse the motors for a short duration in the correct direction
             Forward(.25);
+            Sleep(300);
         }
     }
 }
@@ -413,15 +428,17 @@ void check_heading(float heading) //using RPS
     //you will need to fill out this one yourself and take into account
     //checking for proper RPS data and the edge conditions
     //(when you want the robot to go to 0 degrees or close to 0 degrees)
-    while(RPS.Heading() >= 0 && (RPS.Heading()< heading - 5 || RPS.Heading() > heading + 5))
+    while(RPS.Heading() >= 0 && (RPS.Heading()< heading - 2 || RPS.Heading() > heading + 2))
     {
         if(RPS.Heading() > heading)
         {
             Turn_Right(0,2);
+            Sleep(300);
         }
         if(RPS.Heading() < heading)
         {
             Turn_Left(0,2);
+            Sleep(300);
         }
     Sleep(300);
     }
@@ -532,7 +549,7 @@ void CdSControl()
 //function to calibrate a servo motor
 void Calibration()
 {
-     Mini.TouchCalibrate();
+     Lever.TouchCalibrate();
 }
 
 void MoveTilCdS()
