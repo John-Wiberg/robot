@@ -1,0 +1,77 @@
+//Psuedocode
+
+int main(void)
+{
+	//Wait for the CDS cell to read a value above 2 (when the light turns on)
+    while(CdS_Cell.Value()>2)
+    {}
+
+	//Call the start function and read if the light is on to begin the run
+    Start(CdS_Cell.Value());
+	
+	//Call functions in order of use (jukebox, tray, ice cream, burger, ticket)
+	//Each of these are more general functions with functions inside of them to perform positing and smaller tasks
+	Jukebox();
+	Tray();
+	Lever();
+	Burger();
+	Ticket():
+
+    return 0;
+}
+
+//Function to move the robot x inches
+//This functions uses encoder counts to move the robot forward
+//There is also similar functions to go backwards and make various types of turns
+
+//This reads in a float of how many inches to move
+
+void Forward(float x)
+{
+	//Set Motors to a percentage (the right motor percentage is negative because its wierd)
+    Right_motor.SetPercent(-25);
+    Left_motor.SetPercent(25);
+
+	//Call the encoder function to count until the distance has been reached
+    encoder(counts_per_inch*x);
+
+	//Stop both motors
+    Right_motor.Stop();
+    Left_motor.Stop();
+
+}
+
+//Function to complete the burger flip
+//This is one example of a general function to complete an entire task
+//There are similar functions that complete the remaining tasks
+
+void Burger()
+{
+	//Calls several movement functions to position the robot correctly
+    Turn_Right(0,45);
+    Forward(2);
+    Turn_Left(0,45);
+
+	// Sets the lever to flip the burger to the desired height
+    Lever.SetDegree(40);
+
+    Forward(3.75);
+
+	//Checks the y position of the robot using an RPS function reading in a desired value and positing the robot based on that value
+    check_y_plus(50.9);
+
+    Sleep(1.5);
+
+	//Move the lever up to flip the burger
+    Lever.SetDegree(108);
+
+    Sleep(1.0);
+
+	//Call several more movement functions to flip the burger and place the hot plate back down.
+    Turn_Right(0,20);
+    Sleep(1.0);
+    Backwards(1.5);
+    Turn_Right(0,20);
+    Forward(1.5);
+    Turn_Left(1,30);
+}
