@@ -118,13 +118,13 @@ void Start(float b)
 
 void Tray()
 {
+    Forward(22);
     Turn_Left(0,90);
     Forward(3);
     Turn_Left(0,8);
     Mini.SetDegree(90);
     Sleep(1.0);
-    Turn_Right(1,6.5);
-    Sleep(1.0);
+    Turn_Right(1,8);
 }
 
 void Burger()
