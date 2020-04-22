@@ -129,12 +129,11 @@ void Tray()
 
 void Burger()
 {
-    Turn_Right(0,45);
-    Forward(2);
-    Turn_Left(0,45);
+    Turn_Right(0,180);
+    Backwards(3.0);
     Lever.SetDegree(40);
-    Forward(3.75);
-    //check_y_plus(50.9);
+    Forward(3);
+    check_y_plus(50.9);
     Sleep(1.5);
     Lever.SetDegree(108);
     Sleep(1.0);
